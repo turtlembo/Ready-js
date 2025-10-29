@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+    <div id="wrapper" class="flex justify-center border bg-[#ece9e6]">
+        <div class="flex flex-col items-center gap-[25px] shadow-xl/20 max-w-[550px] min-h-screen w-full mt-[60px] bg-white rounded-[20px] px-[25px] py-[30px]">
+            <div class="flex w-full justify-between ">
+                <h2 class="text-[1.2rem] font-semibold py-2.5">Привет, ...</h2>
+                <button class="text-[0.95rem] py-2.5 px-3 bg-[#e0e0e0] rounded-[10px] font-semibold cursor-pointer hover:bg-[#ccc] transition duration-200">Выйти</button>
+            </div>
+            <form class="flex justify-between w-full">
+                <input type="text" placeholder="Введите задачу" class="p-2.5 border border-[#ccc] rounded-[10px] focus:border-blue-500 outline-0 max-w-[217px] w-full">
+                <select class="border border-[#ccc] p-2.5 max-w-[150px] w-full rounded-[10px] outline-0" name="priority" id="priority-task">
+                    <option value="low">Низкий</option>
+                    <option value="medium">Средний</option>
+                    <option value="high">Высокий</option>
+                </select>
+                <button class="rounded-[10px] text-white p-2.5 bg-[#4a90e2] hover:bg-[#3c7ec6] cursor-pointer font-semibold transition duration-200">Добавить</button>
+            </form>
+            <!-- <ul class="w-full">
+                <li class="flex justify-between py-3 px-3.5 bg-[#f9fafb] hover:bg-[#eef3ff] rounded-[10px] mb-2.5">
+                    <span>asdasd</span>
+                    <div class="flex gap-2">
+                        <input class="m-1 w-4.5" type="checkbox">
+                        <button class="text-[18px] px-1.5">✏️</button>
+                        <button class="text-[18px] px-1.5">🗑️</button>
+                    </div>
+                </li>
+            </ul> -->
+            <!-- <p class="w-full text-gray-500">Нет задач</p> -->
+            
+        </div>
+    </div>
+    <script src="workspace.js"></script>
+</body>
+</html>

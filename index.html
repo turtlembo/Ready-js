@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="wrapper" class="flex justify-center bg-[#ece9e6]">
+        <form id="auth-form" class="flex flex-col items-center gap-[15px] shadow-xl/20 max-w-[550px] min-h-screen w-full mt-[60px] bg-white rounded-[20px] px-[25px] py-[30px]">
+            <h1 class="text-[1.8rem] font-bold pt-[19px]">Task Manager</h1>
+            <p class="text-[#777] text-[0.95rem] py-[15px]">Войдите, чтобы управлять своими задачами</p>
+            <input id="auth-form-name" class="w-full border border-[#ccc] py-2.5 px-4 text-[1rem] rounded-[10px] outline-none" type="text" placeholder="Ваше имя">
+            <input id="auth-form-submit" class="bg-[#4a90e2] hover:bg-[#3c7ec6] cursor-pointer text-white text-4 rounded-[10px] font-semibold py-2.5 px-4 transition duration-200"  type="submit" value="Войти">
+        </form>
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>
