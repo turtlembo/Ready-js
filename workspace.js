@@ -10,6 +10,35 @@ const btnAdd = document.querySelector("#btn-add");
 let user = JSON.parse(localStorage.getItem('logged'));
 let isList = false;
 
+const randomId = () =>{
+    return Math.floor(Math.random() * (20000 - 1 + 1)) + 1;
+}
+
+const getTaskFromLS =()=>{
+    let taskLS;
+    const task = localStorage.getItem('tasks');
+    if(!task){
+        taskLS = {users:{}}
+    }else{
+        taskLS = JSON.parse(task)
+        console.log(123);
+        
+    }
+    return taskLS;
+}
+
+const saveTaskFromLS= (item) =>{
+    let taskLS = getTaskFromLS();
+    if (!taskLS.users[user]) {
+        taskLS.users[user] = [];
+    }
+    taskLS.users[user].push(item)
+    console.log(taskLS);
+    
+        localStorage.setItem('tasks', JSON.stringify(taskLS))
+    
+}
+
 const addNameUserForHeader=(user)=>{
         if (!user) {
         alert("Пользователь не найден");
@@ -18,7 +47,7 @@ const addNameUserForHeader=(user)=>{
         hello.textContent = `Привет, ${user}!`;
     
 }
-addNameUserForHeader(user);
+
 
 formTasks.addEventListener('submit',(e)=> {
     e.preventDefault();
@@ -28,27 +57,35 @@ formTasks.addEventListener('submit',(e)=> {
         if(!isList){
             isList = true;
             createList();
-            crossingOut();
-            editing();
-            deleteTask();
+
             document.querySelector("#not-tasks").classList.add('hidden');
         }
-        if(priorityTask.value === "low"){
-            createTask(nameTask.value, '');
-        }else if(priorityTask.value === "medium"){
-            createTask(nameTask.value, 'text-orange-400');
-        }else if(priorityTask.value === "high"){
-            createTask(nameTask.value, 'text-red-600');
+
+        const newTask ={
+            id: randomId(),
+            title: nameTask.value,
+            priorityTask: priorityTask.value,
+            done:false
         }
+
+        color = ''
+        if(priorityTask.value === "medium"){
+            color= 'text-orange-400';
+        }else if(priorityTask.value === "high"){
+            color= 'text-red-600';
+        }
+        createTask(newTask,color);
+        saveTaskFromLS(newTask)
     nameTask.value = '';
     }
 })
 
 document.addEventListener('DOMContentLoaded', ()=>{
     //добавь сюда потом рендер задач4
-    // createList();
-    // createTask();
-    // crossingOut();
+    crossingOut();
+    editing();
+    deleteTask();
+    addNameUserForHeader(user);
 })
 
 
@@ -63,8 +100,8 @@ const createList = ()=>{
 
 const createTask = (task, color)=>{
     const markup = `
-    <li class="task flex justify-between py-3 px-3.5 bg-[#f9fafb] hover:bg-[#eef3ff] rounded-[10px] mb-2.5 ${color}">
-        <span>${task}</span>
+    <li class="task flex justify-between py-3 px-3.5 bg-[#f9fafb] hover:bg-[#eef3ff] rounded-[10px] mb-2.5 ${color}" data.id="${task.id}">
+        <span class="${task.done?'line-through':''}">${task.title}</span>
         <div class="flex gap-2">
             <input class="m-1 w-4.5 crossing-out" type="checkbox">
             <button class="text-[18px] px-1.5 editing">✏️</button>
@@ -103,11 +140,11 @@ const deleteTask = () =>{
     document.addEventListener('click', (e)=>{
         if(e.target.matches("#task-list .delete-task")){
             e.target.closest('.task').remove();
-        }
-        if(!document.querySelector("#task-list .task")){
-            document.querySelector("#task-list").remove();
-            isList=false
-            document.querySelector("#not-tasks").classList.remove('hidden');
+                if(!document.querySelector("#task-list .task")){
+                    document.querySelector("#task-list").remove();
+                    isList=false
+                    document.querySelector("#not-tasks").classList.remove('hidden');
+                }       
         }
     })
 }
