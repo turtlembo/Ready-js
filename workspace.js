@@ -14,6 +14,19 @@ const randomId = () =>{
     return Math.floor(Math.random() * (20000 - 1 + 1)) + 1;
 }
 
+const addNameUserForHeader=(user)=>{
+        if (!user) {
+        alert("Пользователь не найден");
+        location.href = "index.html";
+        return;
+        }
+        hello.textContent = `Привет, ${user}!`; 
+}
+
+btnExit.addEventListener('click', ()=>{
+    location.href = 'index.html'
+})
+
 const getTaskFromLS =()=>{
     let taskLS;
     const task = localStorage.getItem('tasks');
@@ -21,8 +34,6 @@ const getTaskFromLS =()=>{
         taskLS = {users:{}}
     }else{
         taskLS = JSON.parse(task)
-        console.log(123);
-        
     }
     return taskLS;
 }
@@ -33,21 +44,92 @@ const saveTaskFromLS= (item) =>{
         taskLS.users[user] = [];
     }
     taskLS.users[user].push(item)
-    console.log(taskLS);
-    
-        localStorage.setItem('tasks', JSON.stringify(taskLS))
-    
+    localStorage.setItem('tasks', JSON.stringify(taskLS))
 }
 
-const addNameUserForHeader=(user)=>{
-        if (!user) {
-        alert("Пользователь не найден");
-        return;
+const renderFromLS = () =>{
+    let tasks = getTaskFromLS().users;
+    let markup = '';
+    for (const element in tasks) {
+        if (element === user){
+            const userTasks = tasks[element];
+            if(userTasks.length>0){
+                createList();
+                isList = true;
+                document.querySelector("#not-tasks").classList.add('hidden');
+                for (const task of userTasks) {
+                    let color = '';
+                    let checked = '';
+                    if(task.priorityTask === "medium"){
+                        color= 'text-orange-400';
+                    }else if(task.priorityTask === "high"){
+                        color= 'text-red-600';
+                    }
+                    if(task.done === true){
+                        checked = 'checked'
+                    }else{
+                        checked = '';
+                    }
+                    markup += `
+                    <li class="task flex justify-between py-3 px-3.5 bg-[#f9fafb] hover:bg-[#eef3ff] rounded-[10px] mb-2.5 ${color}" data-id="${task.id}">
+                    <span class="${task.done?'line-through':''}">${task.title}</span>
+                    <div class="flex gap-2">
+                        <input class="m-1 w-4.5 crossing-out" type="checkbox" ${checked}>
+                        <button class="text-[18px] px-1.5 editing">✏️</button>
+                        <button class="text-[18px] px-1.5 delete-task">🗑️</button>
+                    </div>
+                    </li>
+                `
+                }
+                document.querySelector("#task-list").insertAdjacentHTML('beforeend', markup)
+            }   
         }
-        hello.textContent = `Привет, ${user}!`;
-    
+    }  
 }
 
+const deleteTaskFromLS = (value) =>{
+    let taskLS = getTaskFromLS();
+    if (!taskLS.users[user]) {
+        taskLS.users[user] = [];
+    }
+    taskLS.users[user].forEach((el, ind) =>{
+        if(el.id == Number(value)){
+            taskLS.users[user].splice(ind,1)
+        }
+    })
+    localStorage.setItem('tasks', JSON.stringify(taskLS))        
+}
+
+const crossingOutFromLS = (value, crossing) =>{
+    let taskLS = getTaskFromLS();
+    if (!taskLS.users[user]) {
+        taskLS.users[user] = [];
+    }
+    taskLS.users[user].forEach((el) =>{
+        if(el.id == Number(value)){
+            if(crossing.classList.contains('line-through')){
+                el.done = true;
+            }else{
+                el.done = false
+                
+            }
+        }
+    })
+    localStorage.setItem('tasks', JSON.stringify(taskLS))  
+}
+
+const editingFromLS = (value, newTask) =>{
+    let taskLS = getTaskFromLS();
+    if (!taskLS.users[user]) {
+        taskLS.users[user] = [];
+    }
+    taskLS.users[user].forEach((el) =>{
+        if(el.id == Number(value)){
+            el.title = newTask;
+        }
+    })
+    localStorage.setItem('tasks', JSON.stringify(taskLS)) 
+}
 
 formTasks.addEventListener('submit',(e)=> {
     e.preventDefault();
@@ -57,18 +139,15 @@ formTasks.addEventListener('submit',(e)=> {
         if(!isList){
             isList = true;
             createList();
-
             document.querySelector("#not-tasks").classList.add('hidden');
         }
-
         const newTask ={
             id: randomId(),
             title: nameTask.value,
             priorityTask: priorityTask.value,
             done:false
         }
-
-        color = ''
+        let color = ''
         if(priorityTask.value === "medium"){
             color= 'text-orange-400';
         }else if(priorityTask.value === "high"){
@@ -81,18 +160,16 @@ formTasks.addEventListener('submit',(e)=> {
 })
 
 document.addEventListener('DOMContentLoaded', ()=>{
-    //добавь сюда потом рендер задач4
+    renderFromLS();
     crossingOut();
     editing();
     deleteTask();
     addNameUserForHeader(user);
 })
 
-
 const createList = ()=>{
     const markup = `
     <ul id = "task-list" class="w-full">
-
     </ul>
     `
     formTasks.insertAdjacentHTML('afterend',markup)
@@ -100,7 +177,7 @@ const createList = ()=>{
 
 const createTask = (task, color)=>{
     const markup = `
-    <li class="task flex justify-between py-3 px-3.5 bg-[#f9fafb] hover:bg-[#eef3ff] rounded-[10px] mb-2.5 ${color}" data.id="${task.id}">
+    <li class="task flex justify-between py-3 px-3.5 bg-[#f9fafb] hover:bg-[#eef3ff] rounded-[10px] mb-2.5 ${color}" data-id="${task.id}">
         <span class="${task.done?'line-through':''}">${task.title}</span>
         <div class="flex gap-2">
             <input class="m-1 w-4.5 crossing-out" type="checkbox">
@@ -119,6 +196,7 @@ const crossingOut = () =>{
             const taskItem = e.target.closest('.task');
             const span = taskItem.querySelector('span');
             span.classList.toggle("line-through");
+            crossingOutFromLS(e.target.closest(".task").dataset.id, e.target.closest('.task').querySelector('span'))
         }
     })
 }
@@ -131,6 +209,7 @@ const editing = () =>{
                 const taskItem = e.target.closest('.task');
                 const span = taskItem.querySelector('span');
                 span.textContent = newTask;
+                editingFromLS(e.target.closest(".task").dataset.id, newTask)
             }
         }
     })
@@ -139,6 +218,7 @@ const editing = () =>{
 const deleteTask = () =>{
     document.addEventListener('click', (e)=>{
         if(e.target.matches("#task-list .delete-task")){
+            deleteTaskFromLS(e.target.closest(".task").dataset.id);
             e.target.closest('.task').remove();
                 if(!document.querySelector("#task-list .task")){
                     document.querySelector("#task-list").remove();
