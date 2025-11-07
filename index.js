@@ -8,14 +8,13 @@ const authFormSubmit = document.querySelector('#auth-form-submit');
 
 authForm.addEventListener('submit', (e)=>{
     e.preventDefault();
-    if (authFormName.value === ''){
-        alert('Введи имя!');
+    if (authFormName.value === '' || authFormName.value.length > 35){
+        alert('Введи имя корректно!');
     }else{
         localStorage.setItem('logged', JSON.stringify(authFormName.value));
         location.href = "workspace.html"
-        setTimeout(() => {
-            authFormName.value = '';
-        }, 3000);
+        authFormName.value = '';
+            
     }
     
 })
