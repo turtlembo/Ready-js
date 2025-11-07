@@ -13,7 +13,9 @@ authForm.addEventListener('submit', (e)=>{
     }else{
         localStorage.setItem('logged', JSON.stringify(authFormName.value));
         location.href = "workspace.html"
-        authFormName.value = '';
+        setTimeout(() => {
+            authFormName.value = '';
+        }, 3000);
     }
     
 })
